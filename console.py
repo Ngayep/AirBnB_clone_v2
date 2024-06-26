@@ -47,18 +47,25 @@ class HBNBCommand(cmd.Cmd):
             and all new classes
             save it (to the JSON file) and print the id.
         """
-        if not arg:
-            print("** class name missing **")
-            return
         try:
-            cls = eval(arg)
-            if not isinstance(cls, type):
-                raise NameError()
-            obj = cls()
-            obj.save()
-            print(obj.id)
+            if not arg:
+                raise SyntaxError()
+            arg_list = arg.split(" ")
+            kw = {}
+            for arg in arg_list[1:]:
+                arg_splited = arg.split("=")
+                arg_splited[1] = eval(arg_splited[1])
+                if type(arg_splited[1]) is str:
+                    arg_splited[1] = arg_splited[1].replace("_", " ")
+                    .replace('"', '\\"')
+                kw[arg_splited[0]] = arg_splited[1]
+        except SyntaxError:
+            print("** class name missing **")
         except NameError:
             print("** class doesn't exist **")
+        new_instance = HBNBCommand.classes[arg_list[0]](**kw)
+        new_instance.save()
+        print(new_instance.id)
 
     def do_show(self, arg):
         """Prints the string representation of
