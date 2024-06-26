@@ -21,10 +21,14 @@ class FileStorage:
         """Returns a dictionary of models currently in storage
         If a class is specified, only returns objects of that class.
         """
-        if cls:
-            return {key: obj for key, obj in FileStorage.__objects.items()
-                    if isinstance(obj, cls)}
-        return FileStorage.__objects
+        if cls is None:
+            return self.__objects
+        else:
+            filtered_objects = {
+                    key: value for key, value in self.__objects.items()
+                    if isinstance(value, cls)
+            }
+            return filtered_objects
 
     def new(self, obj):
         """
@@ -32,29 +36,27 @@ class FileStorage:
         Args:
             obj: the object to be added to the dictionary
         """
-        key = f"{type(obj).__name__}.{obj.id}"
-        FileStorage.__objects[key] = obj
+        self.__objects["{}.{}".format(type(obj).__name__, obj.id)] = obj
 
     def save(self):
         """serialize objects to the json file"""
         objects = {
                 obj_id: obj.to_dict()
-                for obj_id, obj in FileStorage.__objects.items()
+                for obj_id, obj in self.__objects.items()
         }
-        with open(FileStorage.__file_path, "w") as f:
+        with open(self.__file_path, "w") as f:
             json.dump(objects, f)
 
     def reload(self):
         """deserializes Json files"""
         if os.path.isfile(FileStorage.__file_path):
-            return
-            with open(FileStorage.__file_path, "r") as f:
+            with open(self.__file_path, "r") as f:
                 objects = json.load(f)
                 for obj_id, obj_dict in objects.items():
                     class_name = obj_dict["__class__"]
                     cls = eval(class_name)
                     obj = cls(**obj_dict)
-                    FileStorage.__objects[obj_id] = obj
+                    self.__objects[obj_id] = obj
 
     def count(self, cls=None):
         """
@@ -71,3 +73,20 @@ class FileStorage:
                 if isinstance(obj, cls)
             )
         return len(self.__objects)
+
+    def delete(self, obj=None):
+        """
+        Deletes obj from __objects if it's inside.
+        If obj is None, the method does nothing.
+        """
+        if obj is None:
+            return
+        key = "{}.{}".format(type(obj).__name__, obj.id)
+        if key in self.__objects:
+            del self.__objects[key]
+
+    def close(self):
+        """
+        Call reload() method for deserializing the JSON file to objects
+        """
+        self.reload()
