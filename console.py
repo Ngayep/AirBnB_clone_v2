@@ -27,7 +27,10 @@ classes = {
 
 class HBNBCommand(cmd.Cmd):
     """Command interpreter class"""
-
+    classes = {
+            "City": City,
+            "Place": Place
+            } #initialize an empty dictionary to store registered classes
     prompt = "(hbnb) "
 
     def do_quit(self, arg):
@@ -42,6 +45,14 @@ class HBNBCommand(cmd.Cmd):
         """Do nothing on empty line"""
         pass
 
+    def get_class(self, class_name):
+        """Retrieves a class from the registry based on its name."""
+        if class_name in self.classes:
+            return self.classes[class_name]
+        else:
+            print(f"** class '{class_name}' doesn't exist **")
+            return None
+
     def do_create(self, arg):
         """Create a new instance of BaseModel,
             and all new classes
@@ -51,21 +62,26 @@ class HBNBCommand(cmd.Cmd):
             if not arg:
                 raise SyntaxError()
             arg_list = arg.split(" ")
-            kw = {}
-            for arg in arg_list[1:]:
-                arg_splited = arg.split("=")
-                arg_splited[1] = eval(arg_splited[1])
-                if type(arg_splited[1]) is str:
-                    arg_splited[1] = arg_splited[1].replace("_", " ")
-                    .replace('"', '\\"')
-                kw[arg_splited[0]] = arg_splited[1]
+            class_name = arg_list[0]
+            if class_name not in classes:
+                raise NameError()
+
+            kwargs = {}
+            for param in arg_list[1:]:
+                key, value = param.split("=")
+                value = value.replace('_', ' ').strip('"')
+                kwargs[key] = value
+
+            new_instance = classes[class_name](**kwargs)
+            new_instance.save()
+            print(new_instance.id)
         except SyntaxError:
             print("** class name missing **")
         except NameError:
             print("** class doesn't exist **")
-        new_instance = HBNBCommand.classes[arg_list[0]](**kw)
-        new_instance.save()
-        print(new_instance.id)
+        except Exception as e:
+            print(f"** Error: {e} **")
+
 
     def do_show(self, arg):
         """Prints the string representation of
