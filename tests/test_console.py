@@ -26,13 +26,15 @@ class TestHBNBCommand(unittest.TestCase):
         """test create command with no class name"""
         with patch('sys.stdout', new=StringIO()) as out:
             HBNBCommand().onecmd("create")
-            self.assertEqual(out.getvalue().strip(), "** class name missing **")
+            self.assertEqual(out.getvalue().strip(),
+                             "** class name missing **")
 
     def test_create_invalid_class_name(self):
         """test create command with invalid class name"""
         with patch('sys.stdout', new=StringIO()) as out:
             HBNBCommand().onecmd("create MyModel")
-            self.assertEqual(out.getvalue().strip(), "** class doesn't exist **")
+            self.assertEqual(out.getvalue().strip(),
+                             "** class doesn't exist **")
 
     def test_create_valid_class_name(self):
         """Test create command with valid class name"""
@@ -42,29 +44,59 @@ class TestHBNBCommand(unittest.TestCase):
             self.assertTrue(len(output) > 0)
             self.assertIn("BaseModel." + output, storage.all().keys())
 
+    def test_create_with_parameters(self):
+        """Test create command with parameters"""
+        with patch('sys.stdout', new=StringIO()) as out:
+            HBNBCommand().onecmd('create User name="John_Doe"
+                                 age=30 height=5.9')
+            output = out.getvalue().strip()
+            self.assertTrue(len(output) > 0)
+            self.assertIn("User." + output, storage.all().keys())
+            obj = storage.all()["User." + output]
+            self.assertEqual(obj.name, "John Doe")
+            self.assertEqual(obj.age, 30)
+            self.assertEqual(obj.height, 5.9)
+
+    def test_create_with_invalid_parameters(self):
+        """Test create command with invalid parameters"""
+        with patch('sys.stdout', new=StringIO()) as out:
+            HBNBCommand().onecmd('create User name="John_Doe"
+                                 age=invalid height=5.9')
+            output = out.getvalue().strip()
+            self.assertTrue(len(output) > 0)
+            self.assertIn("User." + output, storage.all().keys())
+            obj = storage.all()["User." + output]
+            self.assertEqual(obj.name, "John Doe")
+            self.assertFalse(hasattr(obj, 'age'))
+            self.assertEqual(obj.height, 5.9)
+
     def test_show_missing_class_name(self):
         """Test show command with no class name"""
         with patch('sys.stdout', new=StringIO()) as out:
             HBNBCommand().onecmd("show")
-            self.assertEqual(out.getvalue().strip(), "** class name missing **")
+            self.assertEqual(out.getvalue().strip(),
+                             "** class name missing **")
 
     def test_show_invalid_class_name(self):
         """Test show command with invalid class name"""
         with patch('sys.stdout', new=StringIO()) as out:
             HBNBCommand().onecmd("show MyModel")
-            self.assertEqual(out.getvalue().strip(), "** class doesn't exist **")
+            self.assertEqual(out.getvalue().strip(),
+                             "** class doesn't exist **")
 
     def test_show_missing_instance_id(self):
         """Test show command with no instance id"""
         with patch('sys.stdout', new=StringIO()) as out:
             HBNBCommand().onecmd("show BaseModel")
-            self.assertEqual(out.getvalue().strip(), "** instance id missing **")
+            self.assertEqual(out.getvalue().strip(),
+                             "** instance id missing **")
 
     def test_show_nonexistent_instance(self):
         """Test show command with nonexistent instance"""
         with patch('sys.stdout', new=StringIO()) as out:
             HBNBCommand().onecmd("show BaseModel 12345")
-            self.assertEqual(out.getvalue().strip(), "** no instance found **")
+            self.assertEqual(out.getvalue().strip(),
+                             "** no instance found **")
 
     def test_show_existing_instance(self):
         """Test show command with an existing instance"""
@@ -78,25 +110,29 @@ class TestHBNBCommand(unittest.TestCase):
         """Test destroy command with no class name"""
         with patch('sys.stdout', new=StringIO()) as out:
             HBNBCommand().onecmd("destroy")
-            self.assertEqual(out.getvalue().strip(), "** class name missing **")
+            self.assertEqual(out.getvalue().strip(),
+                             "** class name missing **")
 
     def test_destroy_invalid_class_name(self):
         """Test destroy command with invalid class name"""
         with patch('sys.stdout', new=StringIO()) as out:
             HBNBCommand().onecmd("destroy MyModel")
-            self.assertEqual(out.getvalue().strip(), "** class doesn't exist **")
+            self.assertEqual(out.getvalue().strip(),
+                             "** class doesn't exist **")
 
     def test_destroy_missing_instance_id(self):
         """Test destroy command with no instance id"""
         with patch('sys.stdout', new=StringIO()) as out:
             HBNBCommand().onecmd("destroy BaseModel")
-            self.assertEqual(out.getvalue().strip(), "** instance id missing **")
+            self.assertEqual(out.getvalue().strip(),
+                             "** instance id missing **")
 
     def test_destroy_nonexistent_instance(self):
         """Test destroy command with nonexistent instance"""
         with patch('sys.stdout', new=StringIO()) as out:
             HBNBCommand().onecmd("destroy BaseModel 12345")
-            self.assertEqual(out.getvalue().strip(), "** no instance found **")
+            self.assertEqual(out.getvalue().strip(),
+                             "** no instance found **")
 
     def test_destroy_existing_instance(self):
         """Test destroy command with an existing instance"""
@@ -111,7 +147,8 @@ class TestHBNBCommand(unittest.TestCase):
         """Test all command with invalid class name"""
         with patch('sys.stdout', new=StringIO()) as out:
             HBNBCommand().onecmd("all MyModel")
-            self.assertEqual(out.getvalue().strip(), "** class doesn't exist **")
+            self.assertEqual(out.getvalue().strip(),
+                             "** class doesn't exist **")
 
     def test_all_valid_class_name(self):
         """Test all command with valid class name"""
@@ -133,25 +170,29 @@ class TestHBNBCommand(unittest.TestCase):
         """Test update command with no class name"""
         with patch('sys.stdout', new=StringIO()) as out:
             HBNBCommand().onecmd("update")
-            self.assertEqual(out.getvalue().strip(), "** class name missing **")
+            self.assertEqual(out.getvalue().strip(),
+                             "** class name missing **")
 
     def test_update_invalid_class_name(self):
         """Test update command with invalid class name"""
         with patch('sys.stdout', new=StringIO()) as out:
             HBNBCommand().onecmd("update MyModel")
-            self.assertEqual(out.getvalue().strip(), "** class doesn't exist **")
+            self.assertEqual(out.getvalue().strip(),
+                             "** class doesn't exist **")
 
     def test_update_missing_instance_id(self):
         """Test update command with no instance id"""
         with patch('sys.stdout', new=StringIO()) as out:
             HBNBCommand().onecmd("update BaseModel")
-            self.assertEqual(out.getvalue().strip(), "** instance id missing **")
+            self.assertEqual(out.getvalue().strip(),
+                             "** instance id missing **")
 
     def test_update_nonexistent_instance(self):
         """Test update command with nonexistent instance"""
         with patch('sys.stdout', new=StringIO()) as out:
             HBNBCommand().onecmd("update BaseModel 12345")
-            self.assertEqual(out.getvalue().strip(), "** no instance found **")
+            self.assertEqual(out.getvalue().strip(),
+                             "** no instance found **")
 
     def test_update_missing_attribute_name(self):
         """Test update command with no attribute name"""
@@ -159,7 +200,8 @@ class TestHBNBCommand(unittest.TestCase):
         obj.save()
         with patch('sys.stdout', new=StringIO()) as out:
             HBNBCommand().onecmd(f"update BaseModel {obj.id}")
-            self.assertEqual(out.getvalue().strip(), "** attribute name missing **")
+            self.assertEqual(out.getvalue().strip(),
+                             "** attribute name missing **")
 
     def test_update_missing_value(self):
         """Test update command with no value"""
@@ -171,4 +213,4 @@ class TestHBNBCommand(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()                                                                                   
+    unittest.main()
