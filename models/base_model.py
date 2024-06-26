@@ -1,11 +1,20 @@
 #!/usr/bin/python3
 """base class for all models"""
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, DateTime
 import uuid
+import models
 from datetime import datetime
+
+Base = declarative_base()
 
 
 class BaseModel:
     """base class for all models"""
+
+    id = Column(String(60), unique=True, nullable=False, primary_key=True)
+    created_at = Column(DateTime, nullable=False, default=(datetime.utcnow()))
+    updated_at = Column(DateTime, nullable=False, default=(datetime.utcnow()))
 
     def __init__(self, *args, **kwargs):
         """A constructor method initializing BaseModel
@@ -33,8 +42,8 @@ class BaseModel:
         with the current datetime
         """
         self.updated_at = datetime.now()
-        from models import storage
-        storage.save()
+        models.storage.new(self)
+        models.storage.save()
 
     def to_dict(self):
         """returns a dictionary containing all keys/values
@@ -44,4 +53,9 @@ class BaseModel:
         new_dict['__class__'] = self.__class__.__name__
         new_dict['created_at'] = self.created_at.isoformat()
         new_dict['updated_at'] = self.updated_at.isoformat()
+        if "_sa_inatance_state" in new_dict:
+            del new_dict["_sa_instance_state"]
         return new_dict
+
+    def delete(self):
+        models.storage.delete(self)
