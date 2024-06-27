@@ -16,28 +16,28 @@ class test_User(test_basemodel):
 
     def test_first_name(self):
         """ testing user first anme attr"""
-        new = self.value()
+        new = self.value(first_name="John")
         self.assertEqual(type(new.first_name), str if
                          os.getenv('HBNB_TYPE_STORAGE') != 'db' else
                          type(None))
 
     def test_last_name(self):
         """ testing user last name attr"""
-        new = self.value()
+        new = self.value(last_name="Doe")
         self.assertEqual(type(new.last_name), str if
                          os.getenv('HBNB_TYPE_STORAGE') != 'db' else
                          type(None))
 
     def test_email(self):
         """ testing user email attr"""
-        new = self.value()
+        new = self.value(email="john.doe@example.com")
         self.assertEqual(type(new.email), str if
                          os.getenv('HBNB_TYPE_STORAGE') != 'db' else
                          type(None))
 
     def test_password(self):
         """ testing user password attr"""
-        new = self.value()
+        new = self.value(password="password")
         self.assertEqual(type(new.password), str if
                          os.getenv('HBNB_TYPE_STORAGE') != 'db' else
                          type(None))
