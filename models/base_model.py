@@ -22,7 +22,8 @@ class BaseModel:
     """The BaseModel class from which future classes will be derived"""
 
     if getenv("HBNB_TYPE_STORAGE") == 'db':
-        id = Column(String(60), nullable=False, primary_key=True)
+        id = Column(String(60), nullable=False, primary_key=True,
+                    default=lambda: str(uuid.uuid4()))
         created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
         updated_at = Column(DateTime, nullable=False, default=datetime.utcnow)
 
@@ -31,14 +32,27 @@ class BaseModel:
         self.id = str(uuid.uuid4())
         self.created_at = datetime.now()
         self.updated_at = self.created_at
-        for key, value in kwargs.items():
-            if key == '__class__':
-                continue
-            setattr(self, key, value)
-            if type(self.created_at) is str:
-                self.created_at = datetime.strptime(self.created_at, time_fmt)
-            if type(self.updated_at) is str:
-                self.updated_at = datetime.strptime(self.updated_at, time_fmt)
+        if kwargs:
+            for key, value in kwargs.items():
+                if key == "created_at" or key == "updated_at":
+                    if isinstance(value, str):
+                        try:
+                            value = datetime.strptime(value, time_fmt)
+                        except ValueError:
+                            pass
+                    setattr(self, key, value)
+                elif key != "__class__":
+                    setattr(self, key, value)
+            if "id" not in kwargs:
+                self.id = str(uuid.uuid4())
+            if "created_at" not in kwargs:
+                self.created_at = datetime.utcnow()
+            if "updated_at" not in kwargs:
+                self.updated_at = datetime.utcnow()
+        else:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.utcnow()
+            self.updated_at = datetime.utcnow()
 
     def __str__(self):
         """String representation of the BaseModel class"""
