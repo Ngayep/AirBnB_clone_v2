@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""script that starts a Flask web application
+"""script that starts a Flask web application:
 with different routesand at a particular port"""
 
 from flask import Flask
@@ -20,7 +20,7 @@ def hbnb:
 
 @app.route('/c/<text>', strict_slashes=False)
 def cText:
-    """Return C followed by some text"""
+    """Return C followed by some text jgkagyewgfjbgygcjhjf"""
     return "C {}".format(text.replace("_", " "))
 
 
