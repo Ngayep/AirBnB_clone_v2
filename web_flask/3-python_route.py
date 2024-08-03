@@ -7,19 +7,19 @@ app = Flask("__name__")
 
 
 @app.route('/', strict_slashes=False)
-def hello:
+def hello():
     """Return a certain string"""
     return "Hello HBNB!"
 
 
 @app.route('/hbnb', strict_slashes=False)
-def hbnb:
+def hbnb():
     """Return a certain string"""
     return "HBNB"
 
 
 @app.route('/c/<text>', strict_slashes=False)
-def cText:
+def cText(text):
     """Return C followed by some text jgkagyewgfjbgygcjhjf"""
     return "C {}".format(text.replace("_", " "))
 
