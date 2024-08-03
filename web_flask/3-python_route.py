@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """script that starts a Flask web application
-with different routes
-"""
+with different routesand at a particular port"""
 
 from flask import Flask
 app = Flask("__name__")
