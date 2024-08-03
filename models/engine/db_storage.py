@@ -77,10 +77,6 @@ class DBStorage:
         if obj:
             self.__session.delete(obj)
 
-    def close(self):
-        """Dispose of current session if active"""
-        self.__session.remove()
-
     def get(self, cls, id):
         """Retrieve an object"""
         if cls is not None and type(cls) is str and id is not None and\
@@ -101,3 +97,7 @@ class DBStorage:
             for cls in name2class.values():
                 total += self.__session.query(cls).count()
         return total
+
+    def close(self):
+        """Dispose of current session if active"""
+        self.__session.remove()

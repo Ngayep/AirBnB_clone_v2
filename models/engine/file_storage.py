@@ -62,10 +62,6 @@ class FileStorage:
             del self.__objects[obj.__class__.__name__ + '.' + obj.id]
             self.save()
 
-    def close(self):
-        """Deserialize JSON file to objects"""
-        self.reload()
-
     def get(self, cls, id):
         """Retrieve an object"""
         if cls is not None and type(cls) is str and id is not None and\
@@ -84,3 +80,7 @@ class FileStorage:
         elif cls is None:
             total = len(self.__objects)
         return total
+
+    def close(self):
+        """Call reload() method for deserializing the JSON file to objects"""
+        self.reload()
