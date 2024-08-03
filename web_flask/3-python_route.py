@@ -8,13 +8,13 @@ app = Flask("__name__")
 
 @app.route('/', strict_slashes=False)
 def hello:
-    """Return Hello Hbnb!"""
+    """Return a certain string"""
     return "Hello HBNB!"
 
 
 @app.route('/hbnb', strict_slashes=False)
 def hbnb:
-    """Return hbnb!"""
+    """Return a certain string"""
     return "HBNB"
 
 
