@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """ a script that starts a Flask web application
-with 3 routes
-"""
+with 3 routes and opens at a certai port"""
 
 
 from flask import Flask
